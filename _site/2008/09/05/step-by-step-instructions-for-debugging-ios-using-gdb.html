@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Step-by-step instructions for debugging IOS using gdb</title>
+  <meta name="description" content="First off, this is not my work.  It is the work of Andy Davis.  I was just not able to find a place to link to with this info, so thought I would repost, if ...">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://gambits.org/2008/09/05/step-by-step-instructions-for-debugging-ios-using-gdb.html">
+  <link rel="alternate" type="application/rss+xml" title="Points without Tangents" href="http://gambits.org/feed.xml">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Points without Tangents</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Step-by-step instructions for debugging IOS using gdb</h1>
+    <p class="post-meta"><time datetime="2008-09-05T00:00:00-07:00" itemprop="datePublished">Sep 5, 2008</time></p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>First off, this is not my work.  It is the work of Andy Davis.  I was just not able to find a place to link to with this info, so thought I would repost, if this is your work, and you would like me to remove it please just let me know.</p>
+
+<p>Step-by-step instructions for debugging IOS using gdb - Andy Davis,
+2008 (iosftpexploit “at” googlemail &lt;dot&gt; com):</p>
+
+<p>I have been asked by many people for a simple step-by-step guide for
+setting up an IOS exploit development environment, which includes
+connecting to a Cisco router using gdb, so here goes:</p>
+
+<p>(By the way the router I connect to is a Cisco 2621XM)</p>
+
+<p>Installing and configuring minicom:</p>
+
+<p>In Ubuntu type “apt-get install minicom”</p>
+
+<p>Connect the console port of your router to your PC using a Cisco UTP DB9 cable</p>
+
+<p>type “minicom -s”</p>
+
+<p>Scroll down to “Serial port setup”</p>
+
+<p>Set the “Serial device” to “/dev/ttyS0” (COM1 - or whatever your
+router is connected to on your PC)</p>
+
+<p>Set “Bps/Par/Bits” to “9600 8N1”</p>
+
+<p>exit the submenu then scroll down to “Modem and dialling”</p>
+
+<p>Set “Init string” and “Reset string” to be blank</p>
+
+<p>exit the submenu then scroll down to “Save setup as dfl”</p>
+
+<p>Exit</p>
+
+<p>Type “minicom” - hit return a few times and you should have an IOS prompt</p>
+
+<p>Exit minicom by typing “ctrl-a” then “x” return</p>
+
+<p>Installing and configuring gdb:</p>
+
+<p>Go to http://ftp.gnu.org/gnu/gdb/</p>
+
+<p>Download “gdb-6.0.tar.gz” and “gdb-6.1.1.tar.gz”</p>
+
+<p>tar xvfz gdb-6.0.tar.gz
+tar xvfz gdb-6.1.1.tar.gz</p>
+
+<p>copy “gdb-6.1.1/include/obstack.h” to “gdb-6.0/include/” (obstack.h in
+gdb 6.0 is broken)</p>
+
+<p>edit gdb-6.0/gdb/remote.c</p>
+
+<p>on line 4261</p>
+
+<p>change “static int remote_cisco_mode;” to “static int remote_cisco_mode = 1;”</p>
+
+<p>edit gdb-6.0/sim/ppc/ppc-instructions</p>
+
+<p>on line 1285, under “LABEL(Done):”</p>
+
+<p>Add the line “(void)0;”</p>
+
+<p>cd gdb-6.0/</p>
+
+<p>./configure –target=powerpc-elf</p>
+
+<p>make</p>
+
+<p>make install</p>
+
+<p>In your home directory create a file called “.gdbinit” containing the following:</p>
+
+<p>target remote /dev/ttyS0 (or whatever port your router is connected to)</p>
+
+<p>Connecting to the router using gdb:</p>
+
+<p>type “minicom” to connect to the router</p>
+
+<p>enter “enable mode” by typing “en” followed by the enable password</p>
+
+<p>type “gdb kernel” - the router will display the following:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Type “ctrl-a” then “x” to exit minicom</p>
+
+<p>type “powerpc-elf-gdb”</p>
+
+<p>gdb will connect to the router via the serial cable and display the following:</p>
+
+<p>GNU gdb 6.0
+Copyright 2003 Free Software Foundation, Inc.
+GDB is free software, covered by the GNU General Public License, and you are
+welcome to change it and/or distribute copies of it under certain conditions.
+Type “show copying” to see the conditions.
+There is absolutely no warranty for GDB.  Type “show warranty” for details.
+This GDB was configured as “–host=i686-pc-linux-gnu –target=powerpc-elf”.
+warning: Relocation packet received with no symbol file.  Packet Dropped</p>
+
+<p>0x00000000 in ?? ()</p>
+
+<p>Congratulations you are now debugging IOS ;-)</p>
+
+<p>One unusual feature, which I have yet to explain is that when the
+registers are displayed they are all offset by 1 e.g:</p>
+
+<p>(gdb) info reg
+r0             0x50     80
+r1             0x1      1
+r2             0x81c97498       -2117503848
+r3             0x816e0000       -2123497472
+r4             0x8195e054       -2120884140
+r5             0x81c974b0       -2117503824
+r6             0x3      3</p>
+
+<p>The register displayed as r0 is a bogus value and the value of r0 is
+actually 0x00000001, r1 is 0x81c97498 etc.</p>
+
+<p>Another “feature” of debugging IOS with gdb is that when you set a
+breakpoint and then continue running IOS, when the breakpoint is
+triggered, gdb has actually overwritten the instructions at the
+address at which the breakpoint was set with the value 0x7d821008 and
+therefore, you need to take a note of the bytes associated with the
+instruction at that address and replace them after the breakpoint has
+been triggered before continuing.</p>
+
+<p>To continue normal execution of IOS from within gdb:</p>
+
+<p>Type “c” return
+Hit ctrl-c twice
+Type “y” return
+Type “quit” return</p>
+
+<p>Hopefully this information will promote further IOS security research</p>
+
+<p>Cheers,</p>
+
+<p>Andy</p>
+
+  </div>
+
+</article>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Points without Tangents</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>Points without Tangents</li>
+          <li><a href="mailto:j.scott.stout@gmail.com">j.scott.stout@gmail.com</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/skout23"><span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">skout23</span></a>
+
+          </li>
+          
+
+          
+          <li>
+            <a href="https://twitter.com/skout23"><span class="icon icon--twitter"><svg viewBox="0 0 16 16"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">skout23</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>I have been known to write stuff ... but not lately.
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

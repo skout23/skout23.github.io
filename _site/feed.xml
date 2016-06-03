@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Points without Tangents</title>
+    <description>I have been known to write stuff ... but not lately.
+</description>
+    <link>http://gambits.org/</link>
+    <atom:link href="http://gambits.org/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Thu, 02 Jun 2016 18:03:46 -0700</pubDate>
+    <lastBuildDate>Thu, 02 Jun 2016 18:03:46 -0700</lastBuildDate>
+    <generator>Jekyll v3.1.6</generator>
+    
+      <item>
+        <title>Welcome to Jekyll!</title>
+        <description>&lt;p&gt;You’ll find this post in your &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+
+&lt;p&gt;To add new posts, simply add a file in the &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code class=&quot;highlighter-rouge&quot;&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
+
+&lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hi, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;Tom&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints &#39;Hi, Tom&#39; to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Check out the &lt;a href=&quot;http://jekyllrb.com/docs/home&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://talk.jekyllrb.com/&quot;&gt;Jekyll Talk&lt;/a&gt;.&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 02 Jun 2016 16:26:48 -0700</pubDate>
+        <link>http://gambits.org/jekyll/update/2016/06/02/welcome-to-jekyll.html</link>
+        <guid isPermaLink="true">http://gambits.org/jekyll/update/2016/06/02/welcome-to-jekyll.html</guid>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>Jenkins and Selenium Grid == simple* headless ui testing</title>
+        <description>&lt;p&gt;So in and effort to write a bit more, here is a semi-quick lesson on getting selenium tests and testsuites to run via jenkins jobs.  On a related topic which somehow is completely different, I present a very quick howto on setting up the selenium grid (Selenium Plugin + manually updated jar) hub and first node in the grid on jenkins as well.  When I was setting these up to work together, I failed to grasp that these two pairings of Selenium and Jenkins were different beasts.  Which is my own fault for not reading more before jumping in.&lt;/p&gt;
+
+&lt;h2 id=&quot;common-setup-and-requirements&quot;&gt;Common setup and requirements&lt;/h2&gt;
+
+&lt;p&gt;I am using Jenkins on a headless ubuntu ec2 instance.  I went the route of installing jenkins via &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu&quot; title=&quot;apt-get&quot;&gt;apt-get&lt;/a&gt;.  I had issues trying to get jenkins to cleanly install and work under tomcat with a frontend of nginx, but I know it can work I was just getting it working fast. So with headless linux, to get browsers to work you need an xserver of some sort.  I went with &lt;a href=&quot;http://alex.nederlof.com/blog/2012/11/19/installing-selenium-with-jenkins-on-ubuntu/&quot; title=&quot;much better post&quot;&gt;Xvfb&lt;/a&gt;
+    .  I am sure there were other steps needed, but I am running out of steam on this post so will move on to the meat.&lt;/p&gt;
+
+&lt;h2 id=&quot;selenium-ide-testsuites--jenkins&quot;&gt;Selenium IDE testSuites &amp;amp; Jenkins&lt;/h2&gt;
+
+&lt;p&gt;In Jenkins, install the SeleniumHQ &lt;a href=&quot;http://wiki.hudson-ci.org/display/HUDSON/Seleniumhq+Plugin&quot; title=&quot;Seleniumhq plugin&quot;&gt;plugin&lt;/a&gt;, this will download a standalone selenium server which you can then add to jenkins jobs as a “SeleniumHQ htmlSuite Run” build step.  A quick example would be to use the Selenium IDE firefox plugin to create a simple test, and testsuite. Export those test and testsuite as html files, and then publish the html files into your SCM of choice.  Create a new jenkins job, point the job’s SCM at the location of where you stored the testsuites, and then add a build step which runs the testsuite, point the suiteFile and resultFile to the jenkins job workspace.  Run the jenkins job.  You should then have a resultfile which you can view via the jenkins job workspace.  (I know I should add more here, maybe in a later release)&lt;/p&gt;
+
+&lt;h2 id=&quot;selenium-grid&quot;&gt;Selenium Grid&lt;/h2&gt;
+&lt;p&gt;If you want to develope more involved scripts and only run them via an exposed Seleniumn Grid, then in Jenkins install the Selenium &lt;a href=&quot;http://wiki.jenkins-ci.org/display/JENKINS/Selenium+Plugin&quot; title=&quot;Selenium Plugin&quot;&gt;Plugin&lt;/a&gt;, which is different then the previous HQ plugin.  This will start up an always on Selenium Grid hub, which will wait for nodes to attach to.  At first I ran into problems because of the dual install of the HQ plugin, to solve this I changed the port the grid starts up on (4040), to a different port.  I then failed to RTFM and had trouble when pointing scripts to the hub.  What I needed to do first was attach worker nodes to the hub, and then my remote scripts worked.  To get an always on worker node, I just started up an always on worker node running on the same jenkins box.  Take note NODEPORT and HUBPORT need to be suited for your jenkins env.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; java -jar selenium-server-standalone-2.30.0.jar -port NODEPORT -role node -hub http://localhost:HUBPORT/wd/hub
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;After that I had a working grid, to which I could run my remote scripts against.&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 21 Feb 2013 00:00:00 -0800</pubDate>
+        <link>http://gambits.org/2013/02/21/jenkins-selenium-grid-simple-ui-testing.html</link>
+        <guid isPermaLink="true">http://gambits.org/2013/02/21/jenkins-selenium-grid-simple-ui-testing.html</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Wow almost a year</title>
+        <description>&lt;p&gt;Happy Valentines!  I am messing around with getting eclipse working with github, and just sorting out what all the querks might be.  Still doing a bunch of Ruby stuff, it is my default goto when I need a tool.  However I keep being drawn to GoLang. (I still think it should be names Issue9). Cheers, and hopefully I won’t wait another year before updating again.&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 14 Feb 2013 00:00:00 -0800</pubDate>
+        <link>http://gambits.org/2013/02/14/wow-almost-a-year.html</link>
+        <guid isPermaLink="true">http://gambits.org/2013/02/14/wow-almost-a-year.html</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Almost cleaned up</title>
+        <description>&lt;p&gt;I still need to figure out how to clean up this default layout to meet my desires, but have the old posts back up, Have removed the default post pages, most posts are almost markdown formatted, and I think I have an idea of what I want to accomplish for the site going forward.&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 05 Mar 2012 00:00:00 -0800</pubDate>
+        <link>http://gambits.org/2012/03/05/almost-cleaned-up.html</link>
+        <guid isPermaLink="true">http://gambits.org/2012/03/05/almost-cleaned-up.html</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Hello Jekyll</title>
+        <description>&lt;p&gt;I need to remember markdown and play around with this a bit more.  I managed to kill my toto blog via bad backup policies, I have the old wp posts and i wrote a converter to md before so should not be too difficult again.  Jekyll still seema a bit over kill for what I want, but will see.&lt;/p&gt;
+
+&lt;p&gt;Cheers,
+Scott&lt;/p&gt;
+</description>
+        <pubDate>Fri, 02 Mar 2012 00:00:00 -0800</pubDate>
+        <link>http://gambits.org/2012/03/02/hello-jekyll.html</link>
+        <guid isPermaLink="true">http://gambits.org/2012/03/02/hello-jekyll.html</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Fixed Width Font in gmail after labs</title>
+        <description>&lt;p&gt;I am a fan of the &lt;a href=&quot;http://www.googlelabs.com/&quot; title=&quot;Google Labs&quot;&gt;google labs&lt;/a&gt;.  Gmail labs in particular is a fav of
+mine, since I tend to use gmail a bunch. In a gmail dev &lt;a href=&quot;http://gmailblog.blogspot.com/2010/02/gmail-labs-graduation-and-retirement.html&quot; title=&quot;Gmail labs blog&quot;&gt;blog post&lt;/a&gt; I
+read this morning, I saw that google had decided to retire some of the lab
+feature. The list of “graduated” and “retired” can be found on the post.
+What irked me at the time, was the “retirement” of Fixed Width Fonts.&lt;br /&gt;
+So I &lt;a href=&quot;http://github.com/skout23/gambit_files&quot; title=&quot;Get your fixed width gmail back here&quot;&gt;fixed&lt;/a&gt; it.&lt;/p&gt;
+
+&lt;p&gt;~ 
+I had just only recently started to use this  feature and was initially pissed.
+I then followed links to get to the &lt;a href=&quot;https://groups.google.com/group/gmail-labs&quot; title=&quot;gmail labs groups&quot;&gt;feedback&lt;/a&gt; form, intending to give them
+a pleading letter of objection.  I then started reading the posts in the
+&lt;a href=&quot;http://github.com/skout23/gambit_files&quot; title=&quot;Get your fixed width gmail back here&quot;&gt;Fixed Font&lt;/a&gt; threads. There I found a greasemonkey to perform the Font switch
+without the need of the labs.  Long story short, Chromium supports greasemonkey
+scripts, I modified the script to match Chrome’s standards and it works well
+for me YMMV.  You can find the script at the &lt;a href=&quot;http://github.com/skout23/gambit_files&quot; title=&quot;Get your fixed width gmail back here&quot;&gt;gambit files&lt;/a&gt; repo. You can install 
+directly from the page, or download and mess with it yourself, and then later
+install it.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 25 Feb 2010 00:00:00 -0800</pubDate>
+        <link>http://gambits.org/2010/02/25/fixed-width-font-in-gmail-after-labs.html</link>
+        <guid isPermaLink="true">http://gambits.org/2010/02/25/fixed-width-font-in-gmail-after-labs.html</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>CSS and Old stuff</title>
+        <description>&lt;p&gt;I learned a little bit about &lt;a href=&quot;http://attacklab.net/showdown/&quot; title=&quot;AttackLab.net&#39;s showdown editor&quot;&gt;markdown&lt;/a&gt;, &lt;a href=&quot;http://cssmate.com/csseditor.htm&quot; title=&quot;CSSMate&#39;s online editor&quot;&gt;css&lt;/a&gt;, and took
+a quick &lt;a href=&quot;http://github.com/skout23/toto_wordpress_import&quot; title=&quot;My silly convert script&quot;&gt;stab&lt;/a&gt; at an export of old posts.  My script was based
+off of &lt;a href=&quot;http://github.com/swenson/scanty_wordpress_import&quot; title=&quot;Swenson&#39;s wp 2 scanty import&quot;&gt;swenson’s&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;~ At somepoint I used hpricot to parse the xml
+since I was having issues with sequel, but I am not sure why used
+hpricot instead of nokogiri. It was early 2009 when I last attempted 
+the blog migration, what can I say it was a different time.
+Will be cleaning the layout more in the coming days.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 23 Feb 2010 00:00:00 -0800</pubDate>
+        <link>http://gambits.org/2010/02/23/css-and-old-stuff.html</link>
+        <guid isPermaLink="true">http://gambits.org/2010/02/23/css-and-old-stuff.html</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Might help if I ...</title>
+        <description>&lt;p&gt;take a few mins and learn markdown at some point. 
+I am failing at it today. &lt;br /&gt;
+I setup a &lt;a href=&quot;http://cloudhead.io/toto&quot; title=&quot;toto&quot;&gt;toto&lt;/a&gt; based blog, I followed these steps at &lt;a href=&quot;http://http://www.rubyinside.com/deploy-blog-with-toto-and-heroku-2962.html/&quot; title=&quot;rubyinside&quot;&gt;rubyinside&lt;/a&gt;. 
+I signed up with &lt;a href=&quot;http://api.heroku.com/signup&quot; title=&quot;Heroku Signup&quot;&gt;heroku&lt;/a&gt; and did the following:&lt;/p&gt;
+
+&lt;p&gt;following:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;sudo gem install toto&lt;/li&gt;
+  &lt;li&gt;sudo gem install heroku&lt;br /&gt;
+…&lt;/li&gt;
+  &lt;li&gt;git clone git://github.com/cloudhead/dorothy.git my_new_blog&lt;/li&gt;
+  &lt;li&gt;cd my_new_blog&lt;/li&gt;
+  &lt;li&gt;heroku create&lt;/li&gt;
+  &lt;li&gt;modified config.ru to my needs&lt;/li&gt;
+  &lt;li&gt;heroku addons:add custom_domains&lt;/li&gt;
+  &lt;li&gt;heroku domains:add blog.skoutsec.org&lt;/li&gt;
+  &lt;li&gt;heroku domains:add blog.gambits.org&lt;/li&gt;
+  &lt;li&gt;added CNAME’s to point to ‘proxy.heroku.com.’&lt;/li&gt;
+  &lt;li&gt;rm articles/1900&lt;/li&gt;
+  &lt;li&gt;rake new
+    &lt;ul&gt;
+      &lt;li&gt;answered the questions&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;added what you are reading now to the resulting file&lt;/li&gt;
+  &lt;li&gt;git add .&lt;/li&gt;
+  &lt;li&gt;git commit -am ‘Initial post’&lt;/li&gt;
+  &lt;li&gt;git push heroku master&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now I need to get to work on the layout and old posts.&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 22 Feb 2010 00:00:00 -0800</pubDate>
+        <link>http://gambits.org/2010/02/22/might-help-if-i.html</link>
+        <guid isPermaLink="true">http://gambits.org/2010/02/22/might-help-if-i.html</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>AWS forced detachment and fully automated backups of volumes</title>
+        <description>&lt;p&gt;*EDIT 2012-06-26 * a better / updated version of this is now one of my &lt;a href=&quot;https://gist.github.com/3001264&quot; title=&quot;EBS Gist&quot;&gt;GIST’s&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Just a quick one today.  More uses of the ec2 gem.  Here is a command to force a volume to detach via ec2sh:&lt;/p&gt;
+
+&lt;p&gt;@ec2.detach_volume(:volume_id=&amp;gt;;”INSERT_YOUR_VOLID”, :force=&amp;gt;;’true’)&lt;/p&gt;
+
+&lt;p&gt;And here is a script to handle all your backup needs.  It deletes snapshots older than 2 weeks and then takes a snapshot of all your current vol’s .  (attached or not)  (you can play with this pretty easily).&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;EDIT&lt;/em&gt; updated the script to delete first, and then snapshot, also added some comments to the code.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env ruby&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rubygems&#39;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;EC2&#39;&lt;/span&gt;
+
+&lt;span class=&quot;no&quot;&gt;ACCESS_KEY_ID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;YOUR_KEY&#39;&lt;/span&gt;
+&lt;span class=&quot;no&quot;&gt;SECRET_ACCESS_KEY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;YOUR_SECRET_KEY&#39;&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Target date 2 weeks = (60 secs * 60 mins * 24 hours * 14 days)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;targetDate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;now&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;14&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# instanciate a class object connection to ec2 &lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ec2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;EC2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Base&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:access_key_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ACCESS_KEY_ID&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:secret_access_key&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;SECRET_ACCESS_KEY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# access all snapshots associated with your aws account&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# from the class object then delete the snapshots&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# older than targetDate&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;ec2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;describe_snapshots&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;snapshotSet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;snapshot&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;snapshot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;startTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;targetDate&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;About to delete &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;snapshot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;snapshotId&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ec2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;delete_snapshot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:snapshot_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;snapshot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;snapshotId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+
+&lt;span class=&quot;c1&quot;&gt;# access all volumes associated with your aws account &lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# available from the class object then create a snapshot&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# of each volume (attached or not)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;ec2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;describe_volumes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;volumeSet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;volume&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Creating SNAPshot of &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;volume&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;volumeId&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;ec2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;create_snapshot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:volume_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;volume&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;volumeId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Hope someone finds this useful, let me know if you are doing interesting stuff with AWS or various gems that interact with it.  Lets automate this stuff and get busy having fun.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 09 Feb 2009 00:00:00 -0800</pubDate>
+        <link>http://gambits.org/2009/02/09/aws-forced-detachment-and-fully-automated-backups-of-volumes.html</link>
+        <guid isPermaLink="true">http://gambits.org/2009/02/09/aws-forced-detachment-and-fully-automated-backups-of-volumes.html</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Weekend in Vegas</title>
+        <description>&lt;p&gt;So my friend TommEE Pickles is a streaming media guru/whore, illusion enthusiast, sometimes ninja, &lt;a title=&quot;UCB&quot; href=&quot;http://www.ucbtheatre.com/&quot; target=&quot;_blank&quot;&gt;UCB&lt;/a&gt; performer, magician in training, functional alcoholic, degenerate gambler, oh and a dirty haxor… you may have heard of him if not check out &lt;a title=&quot;his blog&quot; href=&quot;http://tommee.net/His%20Blog/his%20blog.html&quot; target=&quot;_blank&quot;&gt;his blog&lt;/a&gt;.  Well because of his many talents, he was invited out to Vegas to put on a nightly display of skills at the craps table.  It’s mesmerizing. :) &lt;!--more--&gt;Tommee, was nice enough to see if I wanted to head out there an visit sin city, and since I had some money burning a hole in my pocket, I accepted.
+Tommee drives a spiffy Tiburon, with a very nice HUD.  During the 5 hour trip, I ended up watching most of the reality tv series “&lt;a title=&quot;Celebracadabra&quot; href=&quot;http://www.vh1.com/shows/dyn/celebracadabra/series.jhtml&quot; target=&quot;_blank&quot;&gt;Celebracadabra&lt;/a&gt;”, from Tommee’s ipod, as well as a documentary “&lt;a title=&quot;SOC&quot; href=&quot;http://streetofcards.com/newsite/&quot; target=&quot;_blank&quot;&gt;Street of Cards&lt;/a&gt;”, so was a bit overloaded on magic by the time we arrived in Vegas, but still found it really entertaining.  We arrive, got some drinks, gamble a bit, meet up with Nick, and Ryan (co-workers of Tommee), and proceed to walk around and gamble/goof off for the rest of the night.  The tables are not so nice to us for most of the night, Nick and Ryan decide to call it in at about 4am, so Tommee, and I head back to the tables…. and I ended up hitting 3 points in a row, making back some of my losses for the night.  There was some bad mojo on my side of the pit(jerks betting on the no pass line, without odds, yelling for a seven), so I moved over to where Tommee, and another gambler Craig were standing.  During my move I decide to color up, and hang back for a bit.  The bad mojo gamblers are 3 rolls and out… Tommee puts on a show hitting 4 points in a row, and during it I feel that me “not jinxing” the streak is a good thing, so I stay out.  Kinda wish I had not stayed out, but can’t know that what happen next would not have been different.  Craig winds up hitting 9 points in a row… it was sick.   NINE TIMES… During the 9 point streak, some new rollers come to the table, and do pretty well.  I ended up getting back into the action after Craig’s streak :( , but still ended up doing well.  Funniest part was at about 6am, we decide to get some food.  The bad mojo folks color out at $23, and combined T and I color out well over 2k.&lt;/p&gt;
+
+&lt;p&gt;FYI betting on “no pass”, the min bet and nothing else is lame.  Learn to gamble please.  Heck they offer craps lessons at 11am most places.&lt;/p&gt;
+
+&lt;p&gt;So some drunken conversations over food, and a really silly tip for the waitress, it’s time for  sleep.  Crash, fast forward to 4pm, time to wakey-wakey eggs and bakey.  We had time to waste before a locals party, and so we ended up eating at an italian place in the NYNY.  Blah… So insert a very surreal event here.  We ended up going to a wunderground magicians party… lets just let that sink in… wunderground magician’s party.  Including a cave match tournament featuring heads up trick against trick battles.  It was a ton of fun.  Met &lt;a title=&quot;Jeff&quot; href=&quot;http://www.mcbridemagic.com/&quot; target=&quot;_blank&quot;&gt;Jeff Mcbride&lt;/a&gt; ( an awesome magician, and also a judge on “Celebracadabra”), and AJ (producer for the “&lt;a title=&quot;SOC&quot; href=&quot;http://streetofcards.tv&quot; target=&quot;_blank&quot;&gt;Street of Cards&lt;/a&gt;” Doc) .  The party was at AJ’s house which was spectacular with a great view of the strip.  Had some great conversations, and met some really interesting folks.  Most of which were professional magicians.  The cave matches were streamed live on S.O.C.tv( look under “the cave” on the media player), and were a great laugh.  I think Bizzaro should have been in the finals, but Chris did have to perform like 5 different tricks during the matches.  Ended up Chris and Scott (not me) in the final match and Scott won doing some rubber band magic.  The party was a blast and I was stoked that I got to attend.&lt;/p&gt;
+
+&lt;p&gt;Back to the casinos, kinda fuzzy, I know Nick and Ryan hung out for a bit, but otherwise the night was pretty tame.  Ended up crashing about 4am, and sleeping in late.  Tried to be sneaky and leave later to avoid traffic, boy was that silly… It took over 10 hours from the time we started.  We stopped 3 times to eat, and hang out at stateline for a bit to avoid more traffic (monopoly slot machine can be fun).  Got back home about 3:30am  and got to sleep about 4:30… crazy.  Looking forward to resting this week.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 02 Dec 2008 00:00:00 -0800</pubDate>
+        <link>http://gambits.org/2008/12/02/weekend-in-vegas.html</link>
+        <guid isPermaLink="true">http://gambits.org/2008/12/02/weekend-in-vegas.html</guid>
+        
+        
+      </item>
+    
+  </channel>
+</rss>
